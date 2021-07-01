@@ -1,6 +1,6 @@
 import org.apache.activemq.ActiveMQConnectionFactory;
 
-import javax.jms.*;
+import javax.jms.*;;
 
 public class Consumer {
     public static void main(String[] args) {
@@ -13,7 +13,7 @@ public class Consumer {
         brokerThread.start();
     }
 
-    public static class HelloWorldConsumer implements Runnable {
+    public static class HelloWorldConsumer implements Runnable, ExceptionListener {
         public void run() {
             try {
                 // Create connection factory
@@ -22,6 +22,8 @@ public class Consumer {
                 // Create a connection
                 Connection connection = connectionFactory.createConnection();
                 connection.start();
+
+                connection.setExceptionListener(this);
 
                 // Create session
                 Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -43,9 +45,18 @@ public class Consumer {
                     System.out.println("Received: " + message);
                 }
 
-            } catch (Exception e) {
+                consumer.close();
+                session.close();
+                connection.close();
 
+            } catch (Exception e) {
+                System.out.println("Exception " + e);
+                e.printStackTrace();
             }
+        }
+
+        public synchronized void onException(JMSException jmex) {
+            System.out.println("Exception occured, client shutdown");
         }
     }
 }
