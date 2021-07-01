@@ -10,6 +10,7 @@ import javax.jms.TextMessage;
 
 public class Producer {
     public static void main(String[] args) {
+
         thread(new HelloWorldProducer(), false);
     }
 
@@ -44,7 +45,7 @@ public class Producer {
                 TextMessage message = session.createTextMessage(text);
 
                 // Tell the producer to send message
-                System.out.println("Sent messahe " + message.hashCode() + " : " + Thread.currentThread().getName());
+                System.out.println("Sent message " + message.hashCode() + " : " + Thread.currentThread().getName());
                 producer.send(message);
 
                 // Clean
